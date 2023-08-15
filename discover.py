@@ -6,6 +6,7 @@ import time
 
 from rad.configuration import Configuration, DeviceConfiguration
 from cryptography import x509
+from cryptography.hazmat.backends import default_backend
 
 
 class DeviceConfigurationDiscovery():
@@ -84,7 +85,7 @@ class DeviceConfigurationDiscovery():
             str: The device CN
         """
         with open(path, mode='rb') as fd:
-            cert = x509.load_pem_x509_certificate(fd.read())
+            cert = x509.load_pem_x509_certificate(fd.read(), backend=default_backend())
             common_names = cert.subject.get_attributes_for_oid(oid=x509.NameOID.COMMON_NAME)
             if len(common_names) == 0:
                 raise ValueError("NO CN Defined on Subject Side!")
@@ -105,7 +106,7 @@ class DeviceConfigurationDiscovery():
             str: The device system ID (country code like)
         """
         with open(path, mode='rb') as fd:
-            cert = x509.load_pem_x509_certificate(fd.read())
+            cert = x509.load_pem_x509_certificate(fd.read(), backend=default_backend())
             common_names = cert.issuer.get_attributes_for_oid(oid=x509.NameOID.COMMON_NAME)
             if len(common_names) == 0:
                 raise ValueError("NO CN Defined on Issuer Side!")
